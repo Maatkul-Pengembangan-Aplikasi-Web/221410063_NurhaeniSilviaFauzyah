@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\MahasiswaController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/prodi/edit/{id}', [ProdiController::class, 'edit'])->name('prodi.edit');
     Route::put('/prodi/edit/{id}', [ProdiController::class, 'update'])->name('prodi.update');
     Route::delete('/prodi/delete/{id}', [ProdiController::class, 'delete'])->name('prodi.delete');
+    Route::get('/mahasiswa', [MahasiswaController::class, 'index'])->name('/mahasiswa');
+    Route::get('/mahasiswa/create', [MahasiswaController::class, 'create'])->name('mahasiswa/create');
+Route::post('/mahasiswa/save', [MahasiswaController::class, 'save'])->name('mahasiswa/save');
 });
 
 require __DIR__.'/auth.php';
