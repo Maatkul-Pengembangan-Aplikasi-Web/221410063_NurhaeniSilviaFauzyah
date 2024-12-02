@@ -3,32 +3,62 @@
 namespace App\Http\Controllers;
 
 use App\Models\Prodi;
-
 use Illuminate\Http\Request;
 
 class ProdiController extends Controller
 {
-    public function index()
-{
-    $prodis = Prodi::orderBy('id', 'desc')->get();
-    return view('prodi.index', compact('prodis'));
-}
+    public function index(Request $request)
+    {
+        $search = $request->input('search');
+        $prodis = Prodi::when($search, function ($query, $search) {
+            return $query->where('nama', 'like', '%' . $search . '%');
+        })->orderBy('id', 'desc')->get();
 
-public function create()
-{
-    return view('prodi.create');
-}
+        return view('prodi.index', compact('prodis', 'search'));
+    }
 
-public function save(Request $request)
-{
-    $request->validate([
-        'nama' => 'required'
-    ]);
+    public function create()
+    {
+        return view('prodi.create');
+    }
 
-    Prodi::create([
-        'nama' => $request->nama
-    ]);
+    public function save(Request $request)
+    {
+        $request->validate([
+            'nama' => 'required'
+        ]);
 
-    return redirect()->route('/prodi')->with('success', 'Program Studi berhasil ditambahkan');
-}
+        Prodi::create([
+            'nama' => $request->nama
+        ]);
+
+        return redirect()->route('/prodi')->with('success', 'Program Studi berhasil ditambahkan');
+    }
+
+    public function edit($id)
+    {
+        $prodi = Prodi::findOrFail($id);
+        return view('prodi.edit', compact('prodi'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $request->validate([
+            'nama' => 'required'
+        ]);
+
+        $prodi = Prodi::findOrFail($id);
+        $prodi->update([
+            'nama' => $request->nama
+        ]);
+        return redirect()->route('/prodi')->with('success', 'Program Studi berhasil diupdate');
+    }
+
+    public function delete($id)
+    {
+        $prodi = Prodi::findOrFail($id);
+        $prodi->delete();
+
+        return redirect()->route('/prodi')->with('success', 'Data Program Studi berhasil dihapus');
+    }
 }
